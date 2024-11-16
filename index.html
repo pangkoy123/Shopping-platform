@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Page</title>
+  <style>
+    /* Styling for the product list */
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .product {
+      border: 1px solid #ccc;
+      padding: 10px;
+      width: 200px;
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: auto;
+    }
+    .admin-form {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to My Product Store</h1>
+
+  <!-- Admin Form to Add Product -->
+  <div class="admin-form">
+    <h2>Add New Product</h2>
+    <form id="productForm">
+      <input type="text" id="productName" placeholder="Product Name" required><br><br>
+      <input type="number" id="productPrice" placeholder="Price in PHP" required><br><br>
+      <input type="file" id="productImage" required><br><br>
+      <button type="submit">Add Product</button>
+    </form>
+  </div>
+
+  <!-- Product Display Section -->
+  <h2>Our Products</h2>
+  <div id="productList" class="product-list">
+    <!-- Products will be displayed here -->
+  </div>
+
+  <script>
+    // Array to store products
+    const products = [];
+
+    // Function to format price to PHP currency
+    function formatPrice(price) {
+      return '₱ ' + price.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Function to add a product
+    function addProduct(name, price, image) {
+      const product = {
+        name: name,
+        price: price,
+        image: image
+      };
+      products.push(product);
+      displayProducts();
+    }
+
+    // Function to display products
+    function displayProducts() {
+      const productList = document.getElementById('productList');
+      productList.innerHTML = '';  // Clear the current list
+
+      products.forEach(product => {
+        const productDiv = document.createElement('div');
+        productDiv.classList.add('product');
+
+        // Create product image element
+        const productImage = document.createElement('img');
+        productImage.src = product.image;
+        productImage.alt = product.name;
+
+        // Create product name and price elements
+        const productName = document.createElement('h3');
+        productName.textContent = product.name;
+
+        const productPrice = document.createElement('p');
+        productPrice.textContent = formatPrice(product.price);
+
+        // Append all elements
+        productDiv.appendChild(productImage);
+        productDiv.appendChild(productName);
+        productDiv.appendChild(productPrice);
+
+        // Append the product div to the product list
+        productList.appendChild(productDiv);
+      });
+    }
+
+    // Event listener for form submission
+    document.getElementById('productForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('productName').value;
+      const price = parseFloat(document.getElementById('productPrice').value);
+      const imageFile = document.getElementById('productImage').files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = function() {
+        const imageUrl = reader.result;
+        addProduct(name, price, imageUrl);
+      };
+
+      // If a file is selected, read the image file as a data URL
+      if (imageFile) {
+        reader.readAsDataURL(imageFile);
+      }
+    });
+  </script>
+</body>
+</html>
